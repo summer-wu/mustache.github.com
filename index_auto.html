@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>自动mustache扩展</title>
+</head>
+<body>
+
+<div id="heat"></div>
+
+<script src="extras/mustache.js"></script>
+<script src="extras/jquery-1.12.4.min.js"></script>
+
+<script>
+  g_mustache_str="";
+
+  function render(json_obj) {
+    console.log("render");
+    var e, html, json, template;
+    try {
+      template = g_mustache_str;
+      json = json_obj;
+      html = Mustache.to_html(template, json).replace(/^\s*/mg, '');
+      console.log("render success:");
+      console.log(json);
+      console.log(template);
+      console.log(html)
+    } catch (_error) {
+      e = _error;
+      html = e.toString();
+      console.log("render error:");
+      console.log(html)
+    }
+
+    console.log("render finish");
+    $('#heat').text(html);
+  }
+
+
+  function json_file_success(result) {
+    console.log("json_file_success");
+    console.log(result);
+    render(result)
+  }
+
+  function mustache_file_success(result){
+    console.log("mustache_file_success");
+    console.log(result);
+    g_mustache_str=result;
+    $.ajax({
+      url:'mustaches_and_jsons/self.json',
+      success: json_file_success
+    })
+  }
+
+  function onload0(){
+    console.log("onload0");
+    $.ajax({
+      url:'mustaches_and_jsons/self.mustache',
+      success:mustache_file_success
+    })
+  }
+  $(onload0());
+
+
+</script>
+</body>
+</html>
